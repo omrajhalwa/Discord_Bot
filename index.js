@@ -1,6 +1,11 @@
 import { Client, GatewayIntentBits, time } from 'discord.js';
 import axios from 'axios';
+import dotenv from "dotenv"
 import  cron from 'node-cron';
+
+dotenv.config({
+    path:"./.env"
+})
 const client = new Client({
     intents: [
         GatewayIntentBits.Guilds,
@@ -88,7 +93,7 @@ await doSomething();
         // Compare timestamp with current time
         if (date === curDate && updatedTimestamp && updatedTimestamp <= Date.now()) {
             // If the timestamp is in the past or now, send a message
-            let channel = client.channels.cache.get('1221127109766942867'); // Replace with your channel ID
+            let channel = client.channels.cache.get(process.env.CHANNEL_ID); // Replace with your channel ID
             if (channel) {
                 channel.send(`@everyone ${title} at 08:00 ${contestArr[0].toLowerCase() == 'biweekly' ? 'PM':'AM'}`); // Mention everyone and send message
             }
@@ -189,5 +194,5 @@ client.on("interactionCreate",async interaction=>{
 })
 
 client.login(
-    "MTI1NjY0NTYzMzg3MjIzMjQ1OQ.G9TnRc.aqH1V_THg_SAVvV3EDgdTH7Me3c819IsvwZVHc"
+   process.env.TOKEN
 )

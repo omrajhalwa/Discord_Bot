@@ -1,5 +1,10 @@
 import { REST, Routes } from 'discord.js';
+import dotenv from "dotenv"
 
+
+dotenv.config({
+    path:"./.env"
+})
 const commands = [
   {
     name: 'ping',
@@ -10,12 +15,12 @@ const commands = [
   }
 ];
 
-const rest = new REST({ version: '10' }).setToken("MTI1NjY0NTYzMzg3MjIzMjQ1OQ.G9TnRc.aqH1V_THg_SAVvV3EDgdTH7Me3c819IsvwZVHc");
+const rest = new REST({ version: '10' }).setToken(process.env.TOKEN);
 
 try {
   console.log('Started refreshing application (/) commands.');
 
-  await rest.put(Routes.applicationCommands("1256645633872232459"), { body: commands });
+  await rest.put(Routes.applicationCommands(process.env.ID), { body: commands });
 
   console.log('Successfully reloaded application (/) commands.');
 } catch (error) {
