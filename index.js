@@ -106,39 +106,27 @@ await doSomething();
 
 
 client.on("messageCreate", async(message) => {
-   console.log(message);
+//    console.log(message);
    // console.log(message.content);
 
    let currentDate = new Date();
    let currentTime = currentDate.toLocaleTimeString();
    let scheduledTime = new Date("2024-06-30T08:43:00").getTime() - Date.now();
 
-// let timeoutID=setTimeout(() => {
 
-//     message.reply({
-//         content:"@everyone"
-//     });
-    
-// }, scheduledTime);
-
-
-// clearTimeout(timeoutID);
-
-
-   console.log(currentTime); // Output: "12:34:56 PM" (example)
    
 
     if(message.author.bot) return;
    // console.log(message.author);
     if(message.content==='Hi'||message.content==='Hello'||message.content==='hi'||message.content==='hello'){
         message.reply({
-            content:"<:emoji_33:1194860841619697694> Rom Rom Bhaiyoo..",
+            content:"<:emoji_33:1194860841619697694> Rom Rom Bhaiyoo.. ",
         })
     }
     let str = message.content;
     let strArray = str.split(" ");
-        console.log(strArray[0]);
-        console.log(strArray[1]);
+        // console.log(strArray[0]);
+        // console.log(strArray[1]);
     if(strArray.length > 1 && strArray[0]===';lcprofile'){
         try {
             let result=await axios.get(`https://alfa-leetcode-api.onrender.com/${strArray[1]}/contest`,{
@@ -147,7 +135,7 @@ client.on("messageCreate", async(message) => {
                     'Content-Type':'multipart/form-data'
                 }
             })
-            console.log(result.data);
+            // console.log(result.data);
             message.reply({
                 content:"Handle Name - "+`${strArray[1]}`+'\n'+
                 "Total Contest -"+`${result.data.contestAttend}`+'\n'+
@@ -180,7 +168,7 @@ client.on("interactionCreate",async interaction=>{
                     'Content-Type':'multipart/form-data'
                 }
             })
-            console.log(result.data.data);
+            // console.log(result.data.data);
             await interaction.reply(result.data.data[0].title+' - ('+result.data.data[0].date +')'+'\n'+result.data.data[1].title+' -  ('+result.data.data[1].date +')');
           
 
@@ -189,6 +177,155 @@ client.on("interactionCreate",async interaction=>{
         }
 
        // await interaction.reply('LC Weekly contest!');
+    }
+
+    if(interaction.commandName === 'potd'){
+            let result=await axios.get(`https://leetcodecustomapi.onrender.com/api/omrajhalwa/leetcode/problemoftheday`,{
+                withCredentials:true,
+                headers:{
+                    'Content-Type':'multipart/form-data'
+                }
+            })
+
+            console.log(result.data.content.activeDailyCodingChallengeQuestion.date);
+            let resData=result.data.content.activeDailyCodingChallengeQuestion;
+            await interaction.reply('* Q-Name - '+resData.question.title+'\n'+'* Difficulty-level - '+resData.question.difficulty+'\n'+'* Acceptance-Rate - '+parseInt(resData.question.acRate)+'%'+'\n'+'* Problem-Link - '+'https://leetcode.com'+resData.link);
+    }
+
+    if(interaction.commandName === 'userstat'){
+        const input = interaction.options.getString('input');
+     try{
+    let result=await axios.get(`https://leetcodecustomapi.onrender.com/api/omrajhalwa/leetcode/username/${input}`,{
+        withCredentials:true,
+        headers:{
+            'Content-Type':'multipart/form-data'
+        }
+    })       
+               let resData=result.data.content.matchedUser.submitStats.acSubmissionNum;
+
+               await interaction.reply('User Name - '+`${input}`+'\n'+'-> Total Problem Solved - '+resData[0].count+'\n'+
+                '-> Easy Problem Solved - '+resData[1].count+'\n'+
+                '-> Medium Problem Solved - '+resData[2].count+'\n'+
+                '-> Hard Problem Solved - '+resData[3].count
+               );
+       }catch(err){
+             await interaction.reply("Invalid User, Try it again!");
+       }
+
+    }
+
+    if(interaction.commandName === 'skillstat'){
+        const input = interaction.options.getString('input');
+        try {
+            let result=await axios.get(`https://leetcodecustomapi.onrender.com/api/omrajhalwa/leetcode/skillstat/${input}`,{
+                withCredentials:true,
+                headers:{
+                    'Content-Type':'multipart/form-data'
+                }
+            }) 
+
+            
+            let topicObj=result.data.content.matchedUser.tagProblemCounts
+            let advanced=topicObj.advanced;
+            let intermediate=topicObj.intermediate;
+
+            let fundamental=topicObj.fundamental;
+           // console.log(advanced);
+            // let myReply=null;
+           let advancedString='';
+            advanced.forEach(element => {
+                advancedString += `${element.tagName} - ${element.problemsSolved}\n`;
+               // console.log(element.tagName);
+              });
+              let intermediateString='';
+              intermediate.forEach(element => {
+                  intermediateString += `${element.tagName} - ${element.problemsSolved}\n`;
+                 // console.log(element.tagName);
+                });
+
+                let fundamentalString='';
+            fundamental.forEach(element => {
+                fundamentalString += `${element.tagName} - ${element.problemsSolved}\n`;
+               // console.log(element.tagName);
+              });
+           
+             await interaction.reply(`Username - ${input} \n--Topic wise problem solved---\n * 1. Advanced Topics -> \n${advancedString} \n * 2. Intermediate Topics -> \n${intermediateString} \n * 3. Fundamental Topics -> \n${fundamentalString}`);
+        } catch (error) {
+            await interaction.reply("Invalid User, Try it again!");
+        }
+    }
+
+    if(interaction.commandName === 'recaccepted'){
+        const input1 = interaction.options.getString('input1');
+        const input2 = interaction.options.getString('input2');
+        try {
+            let result=await axios.get(`https://leetcodecustomapi.onrender.com/api/omrajhalwa/leetcode/recentac/${input1}/${input2}`,{
+                withCredentials:true,
+                headers:{
+                    'Content-Type':'multipart/form-data'
+                }
+            }) 
+
+            
+            let resData=result.data.content.recentAcSubmissionList;
+            let advancedString=`* Recent Solved Problems by ${input1}\n \n`;
+            let cnt=1;
+            resData.forEach(element => {
+                advancedString += `-> ${cnt}. ${element.title}\nProblem_Link - https://leetcode.com/problems/${element.titleSlug}/description/\n \n`;
+             cnt++;
+              });
+           
+              await interaction.reply(advancedString);
+        } catch (error) {
+            await interaction.reply("Invalid User, Try it again!");
+        }
+        
+    }
+
+    if(interaction.commandName === 'conteststat'){
+        const input1 = interaction.options.getString('input1');
+        const input2 = interaction.options.getString('input2');
+        try {
+            let result=await axios.get(`https://leetcodecustomapi.onrender.com/api/omrajhalwa/leetcode/conteststat/${input1}`,{
+                withCredentials:true,
+                headers:{
+                    'Content-Type':'multipart/form-data'
+                }
+            }) 
+
+            
+            let resData=result.data.content;
+           let userRanking=resData.userContestRanking;
+           let userRecentContest=resData.userContestRankingHistory;
+          // console.log(userRecentContest);
+           let val=input2;
+           let rankingListLength=userRecentContest.length;
+        //    console.log(rankingListLength);
+           let ansString=`Recent Contest of ${input1}\n`;
+           let cnt=1;
+           for(let i=rankingListLength-1;i>=0 && val--;i--){
+            if(userRecentContest[i].attended){
+                const totalSeconds = userRecentContest[i].finishTimeInSeconds;
+
+// Calculate hours
+const hours = Math.floor(totalSeconds / 3600);
+
+// Calculate remaining minutes
+const minutes = Math.floor((totalSeconds % 3600) / 60);
+
+// Calculate remaining seconds
+const seconds = totalSeconds % 60;
+             ansString+=`${cnt}. ${userRecentContest[i].contest.title}\n-> Rating - ${userRecentContest[i].rating}\n-> Ranking - ${userRecentContest[i].ranking}\n-> Problem_Solved - ${userRecentContest[i].problemsSolved}/${userRecentContest[i].totalProblems}\n-> Rating_Trend - ${userRecentContest[i].trendDirection}\n-> Finish_Time - ${hours} hours, ${minutes} minutes, and ${seconds} seconds\n \n`;
+                    cnt++;
+            }
+                   
+           }
+            await interaction.reply(ansString);
+         
+        } catch (error) {
+            await interaction.reply("Invalid User, Try it again!");
+        }
+        
     }
   
 })
