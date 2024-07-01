@@ -21,7 +21,7 @@ client.on('ready',async () => {
      
     let title=null;
     let date=null;
-
+    let curDate=null;
 // Function to be executed every 12 hours
 async function doSomething() {
     try {
@@ -42,7 +42,7 @@ async function doSomething() {
         let year = currentDate.getFullYear();
         let month = currentDate.getMonth() + 1; // Months are zero-based, so add 1
         let day = currentDate.getDate(); // Get the day of the month
-       let curDate=year+'-'+month+'-'+day;
+        curDate=year+'-'+month+'-'+day;
 
    // console.log(year+'-'+month+'-'+day);
         
@@ -77,20 +77,73 @@ await doSomething();
         newDate.setHours(12);     // Set hours to 22 (10 PM)
         newDate.setMinutes(0);    // Set minutes to 38
     }else{
-        newDate.setHours(10);     // Set hours to 22 (10 PM)
+        newDate.setHours(22);     // Set hours to 22 (10 PM)
         newDate.setMinutes(0);    // Set minutes to 38
     }
     
   
     // Get timestamp in milliseconds
     let updatedTimestamp  = newDate.getTime();
-
+    let give=true;
 
     cron.schedule('* * * * *', async () => {
+
+        
       
-        // console.log(Date.now());
+        function isCurrentTimeEightAMISTnext() {
+            // Get current date/time
+            let currentDate = new Date();
+        
+            // Convert to Indian Standard Time (IST) (UTC +5:30)
+            currentDate.setUTCHours(currentDate.getUTCHours() + 5);
+            currentDate.setUTCMinutes(currentDate.getUTCMinutes() + 30);
+        
+            // Check if current time is 08:00 AM IST
+            return currentDate.getUTCHours() === 2 && currentDate.getUTCMinutes() >= 30;
+        }
+
+        function isCurrentTimeEightAMISTprev() {
+            // Get current date/time
+            let currentDate = new Date();
+        
+            // Convert to Indian Standard Time (IST) (UTC +5:30)
+            currentDate.setUTCHours(currentDate.getUTCHours() + 5);
+            currentDate.setUTCMinutes(currentDate.getUTCMinutes() + 30);
+        
+            // Check if current time is 08:00 AM IST
+            return currentDate.getUTCHours() === 1 && currentDate.getUTCMinutes() >= 30;
+        }
+        console.log(isCurrentTimeEightAMISTnext());
+        // Usage example
+        if (isCurrentTimeEightAMISTnext() && give) {
+            let channel = client.channels.cache.get(process.env.CHANNEL_ID); // Replace with your channel ID
+            if (channel) {
+
+                try {
+                    let result=await axios.get(`https://leetcodecustomapi.onrender.com/api/omrajhalwa/leetcode/problemoftheday`,{
+                        withCredentials:true,
+                        headers:{
+                            'Content-Type':'multipart/form-data'
+                        }
+                    })
+        
+                    console.log(result.data.content.activeDailyCodingChallengeQuestion.date);
+                    let resData=result.data.content.activeDailyCodingChallengeQuestion;
+                    let ans=`* Q-Name - '+${resData.question.title}+'\n'+'* Difficulty-level - '+${resData.question.difficulty}+'\n'+'* Acceptance-Rate - '+${parseInt(resData.question.acRate)}+'%'+'\n'+'* Problem-Link - '+'https://leetcode.com'+${resData.link}`;
+                    channel.send(`@everyone `+ ans); 
+                } catch (error) {
+                    console.log(error);
+                }
+                // Mention everyone and send message
+            }
+            give=false;
+        }
+        if(isCurrentTimeEightAMISTprev()){
+            give=true;
+        }
 
         // Compare timestamp with current time
+        console.log(curDate);
         if (date === curDate && updatedTimestamp && updatedTimestamp <= Date.now()) {
             // If the timestamp is in the past or now, send a message
             let channel = client.channels.cache.get(process.env.CHANNEL_ID); // Replace with your channel ID
@@ -120,7 +173,7 @@ client.on("messageCreate", async(message) => {
    // console.log(message.author);
     if(message.content==='Hi'||message.content==='Hello'||message.content==='hi'||message.content==='hello'){
         message.reply({
-            content:"<:emoji_33:1194860841619697694> Rom Rom Bhaiyoo.. ",
+            content:"Rom Rom Bhaiyo........",
         })
     }
     let str = message.content;
