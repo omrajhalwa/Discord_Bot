@@ -98,8 +98,10 @@ await doSomething();
             currentDate.setUTCHours(currentDate.getUTCHours() + 5);
             currentDate.setUTCMinutes(currentDate.getUTCMinutes() + 30);
         
-            // Check if current time is 08:00 AM IST
-            return currentDate.getUTCHours() === 2 && currentDate.getUTCMinutes() >= 30;
+          
+            // console.log(currentDate.getUTCHours());
+            // console.log(currentDate.getUTCMinutes());
+            return currentDate.getUTCHours() === 8 && currentDate.getUTCMinutes() >= 0;
         }
 
         function isCurrentTimeEightAMISTprev() {
@@ -111,12 +113,12 @@ await doSomething();
             currentDate.setUTCMinutes(currentDate.getUTCMinutes() + 30);
         
             // Check if current time is 08:00 AM IST
-            return currentDate.getUTCHours() === 1 && currentDate.getUTCMinutes() >= 30;
+            return currentDate.getUTCHours() === 5 && currentDate.getUTCMinutes() >= 30;
         }
         console.log(isCurrentTimeEightAMISTnext());
         // Usage example
         if (isCurrentTimeEightAMISTnext() && give) {
-            let channel = client.channels.cache.get(process.env.CHANNEL_ID); // Replace with your channel ID
+            let channel = client.channels.cache.get(process.env.CHANNEL_ID); 
             if (channel) {
 
                 try {
@@ -129,8 +131,8 @@ await doSomething();
         
                     console.log(result.data.content.activeDailyCodingChallengeQuestion.date);
                     let resData=result.data.content.activeDailyCodingChallengeQuestion;
-                    let ans=`* Q-Name - '+${resData.question.title}+'\n'+'* Difficulty-level - '+${resData.question.difficulty}+'\n'+'* Acceptance-Rate - '+${parseInt(resData.question.acRate)}+'%'+'\n'+'* Problem-Link - '+'https://leetcode.com'+${resData.link}`;
-                    channel.send(`@everyone `+ ans); 
+                    let ans=`Q-Name - ${resData.question.title}\n * Difficulty-level - ${resData.question.difficulty}\n * Acceptance-Rate - ${parseInt(resData.question.acRate)}%\n * Problem-Link - https://leetcode.com${resData.link}`;
+                    channel.send(`@everyone Rom Rom Bhaiyo ... \n \n ----Aaj ka Leetcode POTD---- \n \n * -> ${ans}`); 
                 } catch (error) {
                     console.log(error);
                 }
