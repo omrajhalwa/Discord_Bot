@@ -113,9 +113,9 @@ await doSomething();
             currentDate.setUTCMinutes(currentDate.getUTCMinutes() + 30);
         
             // Check if current time is 08:00 AM IST
-            return currentDate.getUTCHours() === 5 && currentDate.getUTCMinutes() >= 30;
+            return currentDate.getUTCHours() === 9 && currentDate.getUTCMinutes() >= 0;
         }
-        console.log(isCurrentTimeEightAMISTnext());
+      //  console.log(isCurrentTimeEightAMISTnext());
         // Usage example
         if (isCurrentTimeEightAMISTnext() && give) {
             let channel = client.channels.cache.get(process.env.CHANNEL_ID); 
@@ -132,7 +132,7 @@ await doSomething();
                     console.log(result.data.content.activeDailyCodingChallengeQuestion.date);
                     let resData=result.data.content.activeDailyCodingChallengeQuestion;
                     let ans=`Q-Name - ${resData.question.title}\n * Difficulty-level - ${resData.question.difficulty}\n * Acceptance-Rate - ${parseInt(resData.question.acRate)}%\n * Problem-Link - https://leetcode.com${resData.link}`;
-                    channel.send(`@everyone Rom Rom Bhaiyo ... \n \n ----Aaj ka Leetcode POTD---- \n \n * -> ${ans}`); 
+                    channel.send(`@everyone Good Morning ... \n \n ----Aaj ka Leetcode POTD---- \n \n * -> ${ans}`); 
                 } catch (error) {
                     console.log(error);
                 }
@@ -145,7 +145,7 @@ await doSomething();
         }
 
         // Compare timestamp with current time
-        console.log(curDate);
+      //  console.log(curDate);
         if (date === curDate && updatedTimestamp && updatedTimestamp <= Date.now()) {
             // If the timestamp is in the past or now, send a message
             let channel = client.channels.cache.get(process.env.CHANNEL_ID); // Replace with your channel ID
@@ -169,10 +169,10 @@ client.on("messageCreate", async(message) => {
    let scheduledTime = new Date("2024-06-30T08:43:00").getTime() - Date.now();
 
 
-   
+   console.log(message.author.globalName);
 
     if(message.author.bot) return;
-   // console.log(message.author);
+    console.log(message.message);
     if(message.content==='Hi'||message.content==='Hello'||message.content==='hi'||message.content==='hello'){
         message.reply({
             content:"Rom Rom Bhaiyo........",
@@ -205,12 +205,58 @@ client.on("messageCreate", async(message) => {
             })
         }
     }
-  
+    
+
+    if(strArray.length>1 && strArray[0]==';setreminder'){
+        let time=strArray[1];
+        let replyAns=`Reminder\n`;
+        for(let i=2;i<strArray.length;i++){
+           replyAns+=strArray[i]+' ';
+        }
+
+        function getSecondsDifference(time) {
+            // Split the input time into hours and minutes
+            let [hours, minutes] = time.split(':').map(Number);
+        
+            // Create a new Date object for the current time
+            let now = new Date();
+        
+            // Create a Date object for the given time today
+            let givenTime = new Date(now);
+            givenTime.setHours(hours, minutes, 0, 0);
+        
+            // Calculate the difference in milliseconds
+            let diffInMillis = givenTime - now;
+        
+            // Convert the difference to seconds
+            let diffInSeconds = Math.floor(diffInMillis / 1000);
+        
+            return diffInSeconds;
+        }
+        
+         
+        let diffInSeconds = getSecondsDifference(time);
+        
+    //   console.log(diffInSeconds);
+    //   console.log(message);
+
+        setTimeout(() => {
+            message.reply({
+                content:replyAns,
+            });
+        }, diffInSeconds * 1000);
+    }
+
+    if(strArray[0] === ';getavatar'){
+        message.reply({
+            content: message.author.displayAvatarURL({ format: 'png', dynamic: true }),
+        });
+    }
    
 });
 
 client.on("interactionCreate",async interaction=>{
-   // console.log(interaction);
+    console.log(interaction);
     if (interaction.commandName === 'ping') {
         await interaction.reply('Pong!');
     }
@@ -384,6 +430,19 @@ const seconds = totalSeconds % 60;
     }
   
 })
+// Error handling and reconnection
+client.on('error', console.error);
+client.on('warn', console.warn);
+
+client.on('shardError', error => {
+    console.error('A websocket connection encountered an error:', error);
+});
+
+client.on('shardDisconnect', (event, id) => {
+    console.log(`Shard ${id} disconnected`, event);
+    // Attempt to reconnect
+    client.login( process.env.TOKEN);
+});
 
 client.login(
    process.env.TOKEN
