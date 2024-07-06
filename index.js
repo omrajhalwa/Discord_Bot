@@ -22,6 +22,7 @@ client.on('ready',async () => {
     let title=null;
     let date=null;
     let curDate=null;
+    let time=null;
 // Function to be executed every 12 hours
 async function doSomething() {
     try {
@@ -34,30 +35,17 @@ async function doSomething() {
         console.log(result.data.data);
         title=result.data.data[0].title;
         date=result.data.data[0].date;
-        let currentTimestamp = Date.now();
-
-        // Create a new Date object with the current timestamp
-        let currentDate = new Date(currentTimestamp);
-        
-        let year = currentDate.getFullYear();
-        let month = currentDate.getMonth() + 1; // Months are zero-based, so add 1
-        let day = currentDate.getDate(); // Get the day of the month
-        curDate=year+'-'+month+'-'+day;
-
-   // console.log(year+'-'+month+'-'+day);
-        
-      
-
+        time=result.data.data[0].time;
     } catch (error) {
         console.log(error);
     }
 
 }
 
-// Calculate the interval duration for 12 hours
+// Calculate the interval duration for 13 hours
 const intervalInMs = 13 * 60 * 60 * 1000; // 13 hours in milliseconds
 
-// Set up the setInterval to run the function every 12 hours
+// Set up the setInterval to run the function every 13 hours
 setInterval(doSomething, intervalInMs);
 // Run the function immediately on startup
 await doSomething();
@@ -67,28 +55,61 @@ await doSomething();
 
 
 
-    // Schedule a task to check reminders every minute
-
-    let contestType =title;
-    let contestArr = contestType.split(" ");
-       // console.log(contestArr[0].toLowerCase());
-    let newDate = new Date(); // Current date and time
-    if(contestArr[0].toLowerCase() =='biweekly'){
-        newDate.setHours(12);     // Set hours to 22 (10 PM)
-        newDate.setMinutes(0);    // Set minutes to 38
-    }else{
-        newDate.setHours(22);     // Set hours to 22 (10 PM)
-        newDate.setMinutes(0);    // Set minutes to 38
-    }
-    
-  
-    // Get timestamp in milliseconds
-    let updatedTimestamp  = newDate.getTime();
+   
     let give=true;
 
     cron.schedule('* * * * *', async () => {
 
+        let remDate=new Date();
+        remDate.setUTCHours(remDate.getUTCHours()+5);
+        remDate.setUTCMinutes(remDate.getUTCMinutes()+30);
+      let  [hours,minutes,seconds]=time.split(':').map(Number);
+      let [datte,month,year]=date.split('/').map(Number);
+    //   console.log(hours,minutes,seconds);
+    //   console.log(remDate.getUTCDate());
+    //   console.log(remDate.getUTCMonth()+1);
+    //   console.log(remDate.getUTCFullYear());
+         
+        if(remDate.getUTCHours() === 6 && remDate.getUTCMinutes() == 0){
+            let channel = client.channels.cache.get(process.env.DARKLORD_SERVER_ID); 
+           channel.send(`@everyone \n -> Get Up time to upsolve from 6 AM to 8 AM \n-> Take a question 4 from Leetcode previous contest \n -> Also try to solve 4-5 question in this duration`);
+        }
+
+        if(remDate.getUTCHours() === 11 && remDate.getUTCMinutes() == 0){
+            let channel = client.channels.cache.get(process.env.DARKLORD_SERVER_ID); 
+           channel.send(`@everyone \n -> Time to take a bath `);
+        }
+        if(remDate.getUTCHours() === 11 && remDate.getUTCMinutes() == 30){
+            let channel = client.channels.cache.get(process.env.DARKLORD_SERVER_ID); 
+           channel.send(`@everyone \n -> Eat Some Food `);
+        }
+
+        if(remDate.getUTCHours() === 12 && remDate.getUTCMinutes() == 30){
+            let channel = client.channels.cache.get(process.env.DARKLORD_SERVER_ID); 
+           channel.send(`@everyone \n -> Come Back Do Some SQL Queries For An 1 hours `);
+        }
+
+
+        if(remDate.getUTCHours() === 15 && remDate.getUTCMinutes() == 0){
+            let channel = client.channels.cache.get(process.env.DARKLORD_SERVER_ID); 
+           channel.send(`@everyone \n -> Codeforces Time \n -> Try to Attempt Atleast 3 question.`);
+        }
+
+        if(remDate.getUTCHours() === 18 && remDate.getUTCMinutes() == 30){
+            let channel = client.channels.cache.get(process.env.DARKLORD_SERVER_ID); 
+           channel.send(`@everyone \n -> Take a Break \n -> Watch some good content.`);
+        }
+
+        if(remDate.getUTCHours() === 21 && remDate.getUTCMinutes() == 0){
+            let channel = client.channels.cache.get(process.env.DARKLORD_SERVER_ID); 
+           channel.send(`@everyone \n -> Development \n -> Improve me please , add  more algo so that i give efficient message to you`);
+        }
         
+
+        if(remDate.getUTCHours() === hours-2 && remDate.getUTCMinutes() === minutes+15 && remDate.getUTCDate() === datte && remDate.getUTCMonth()+1 === month && remDate.getUTCFullYear() === year){
+            let channel = client.channels.cache.get(process.env.CHANNEL_ID); 
+            channel.send(`@everyone  \n \n # ${title}\n -> Time - At ${hours+5+((minutes+30)%60==0)}:${(minutes+30)%60}0 ${hours <=12 ? 'AM' : 'PM' } \n -> Date - ${datte}/${month}/${year}`); 
+        }
       
         function isCurrentTimeEightAMISTnext() {
             // Get current date/time
@@ -144,16 +165,10 @@ await doSomething();
             give=true;
         }
 
-        // Compare timestamp with current time
-      //  console.log(curDate);
-        if (date === curDate && updatedTimestamp && updatedTimestamp <= Date.now()) {
-            // If the timestamp is in the past or now, send a message
-            let channel = client.channels.cache.get(process.env.CHANNEL_ID); // Replace with your channel ID
-            if (channel) {
-                channel.send(`@everyone ${title} at 08:00 ${contestArr[0].toLowerCase() == 'biweekly' ? 'PM':'AM'}`); // Mention everyone and send message
-            }
-            updatedTimestamp=null;
-        }
+
+
+
+     
     });
 
 });
@@ -161,7 +176,7 @@ await doSomething();
 
 
 client.on("messageCreate", async(message) => {
-//    console.log(message);
+  // console.log(message);
    // console.log(message.content);
 
    let currentDate = new Date();
@@ -169,7 +184,7 @@ client.on("messageCreate", async(message) => {
    let scheduledTime = new Date("2024-06-30T08:43:00").getTime() - Date.now();
 
 
-   console.log(message.author.globalName);
+   
 
     if(message.author.bot) return;
     console.log(message.message);
@@ -220,6 +235,8 @@ client.on("messageCreate", async(message) => {
         
             // Create a new Date object for the current time
             let now = new Date();
+            now.setUTCHours(now.getUTCHours()+5);
+            now.setUTCMinutes(now.getUTCMinutes()+30);
         
             // Create a Date object for the given time today
             let givenTime = new Date(now);
