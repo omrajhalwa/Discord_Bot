@@ -58,6 +58,7 @@ client.on('ready', async () => {
 
     let give = true;
     let ans = 'Some Issue Occur in  Leetcode Api';
+    let dataArr = [];
 
     cron.schedule('* * * * *', async () => {
 
@@ -119,7 +120,125 @@ client.on('ready', async () => {
 
 
 
+        if (remDate.getUTCHours() === 23 && remDate.getUTCMinutes() === 55) {
+            let easy = 0;
+            let medium = 0;
+            let hard = 0;
+            let findTotalSubmissionToday = async (username) => {
+                easy = 0;
+                medium = 0;
+                hard = 0;
 
+                try {
+                    let result = await axios.get(`https://leetcodecustomapi.onrender.com/api/omrajhalwa/leetcode/recentac/${username}/${20}`, {
+                        withCredentials: true,
+                        headers: {
+                            'Content-Type': 'multipart/form-data'
+                        }
+                    })
+                    function submittedTime(givenTimestamp) {
+
+
+                        const currentTimestamp = Math.floor(Date.now() / 1000);
+
+
+                        const differenceInSeconds = currentTimestamp - givenTimestamp;
+
+
+                        const days = Math.floor(differenceInSeconds / (24 * 60 * 60));
+                        const hours = Math.floor((differenceInSeconds % (24 * 60 * 60)) / (60 * 60));
+                        const minutes = Math.floor((differenceInSeconds % (60 * 60)) / 60);
+                        const seconds = differenceInSeconds % 60;
+                        return { days, hours, minutes, seconds };
+                    }
+
+                    let resDataArr = result.data.content.recentAcSubmissionList;
+                    // console.log(result.data.content.recentAcSubmissionList[0].timestamp);
+
+
+
+                    for (const element of resDataArr) {
+                        // console.log(element.titleSlug);
+                        let obj = submittedTime(element.timestamp);
+                        //    console.log(element.timestamp);
+                        let days = obj.days;
+                        let hours = obj.hours;
+                        let minutes = obj.minutes;
+                        let seconds = obj.seconds;
+                        if (days === 0 && hours < 24) {
+                            try {
+                                let result = await axios.get(`https://leetcodecustomapi.onrender.com/api/omrajhalwa/leetcode/question/${element.titleSlug}`, {
+                                    withCredentials: true,
+                                    headers: {
+                                        'Content-Type': 'multipart/form-data'
+                                    }
+                                })
+
+                                // console.log(result.data.content.question.difficulty);
+                                let diff = result.data.content.question.difficulty;
+                                if (diff === 'Easy') easy++;
+                                if (diff === 'Medium') medium++;
+                                if (diff === 'Hard') hard++;
+
+                            } catch (error) {
+
+                            }
+                        }
+                    }
+
+
+
+                } catch (error) {
+                    console.log(error);
+                }
+
+
+            }
+            dataArr = [];
+            await findTotalSubmissionToday('omrajhalwa');
+
+            dataArr.push({ easy, medium, hard, name: ' Om     ' })
+            console.log(dataArr);
+            await findTotalSubmissionToday('akp02');
+            dataArr.push({ easy, medium, hard, name: 'Ashish' })
+            await findTotalSubmissionToday('Mohit6261');
+            dataArr.push({ easy, medium, hard, name: 'Mohit ' })
+            console.log(dataArr);
+
+            let n=dataArr.length;
+            for(let i=0;i<n-1;i++){
+                 
+                 for(let j=0;j<n-1-i;j++){
+                    if(((dataArr[j].easy*2)+(dataArr[j].medium*5)+(dataArr[j].hard*7))<((dataArr[j+1].easy*2)+(dataArr[j+1].medium*5)+(dataArr[j+1].hard*7))){
+                     //   swap(dataArr[j]>dataArr[j+1]);
+                        let temp=dataArr[j];
+                        dataArr[j]=dataArr[j+1];
+                        dataArr[j+1]=temp;
+                       
+                    }
+                 }
+            }
+
+           
+
+
+        }
+
+
+        if (remDate.getUTCHours() === 0 && remDate.getUTCMinutes() === 0) {
+
+            let channel = client.channels.cache.get(process.env.CHANNEL_ID);
+            let string = '';
+            for (let i = 0; i < dataArr.length; i++) {
+                let total=dataArr[i].easy+dataArr[i].medium+dataArr[i].hard;
+                if(total===0){
+                    channel.send(`@everyone \n\n @${dataArr[i].name} you have not done any problem today`);
+                }
+                string += `  ${dataArr[i].name}         ${dataArr[i].easy}                  ${dataArr[i].medium}                       ${dataArr[i].hard}\n`;
+            }
+            
+            channel.send(`@everyone Rom Rom Nallo..\n\n -> Total Problem Solved By You Losers in 24 Hours :-\n\n  Name        Easy         Medium          Hard\n${string}`);
+        }
 
 
 
@@ -143,7 +262,24 @@ client.on("messageCreate", async (message) => {
 
 
     if (message.author.bot) return;
-    console.log(message.message);
+
+    if (message.content === ';help') {
+        let responseString = "Oops Want Some Help By Bot\n\n" +
+            "-> Try Out These Following Command As Per Mention Below:-\n\n" +
+            "1. -> Details of Leetcode User \n\nCommand:- \n;lcprofile<space>leetcode_username\n\n" +
+            "2. -> Details of Leetcode Upcoming Contest\n\nCommand:- \n;lcupcome\n\n" +
+            "3. -> Leetcode Problem of Day \n\nCommand:- \n;potd\n\n" +
+            "4. -> Leetcode Total No of Problem Solved By User\n\nCommand:- \n;userstat<space>leetcode_username\n\n" +
+            "5. -> Leetcode Recent Solution Of User\n\nCommand:- \n;recaccepted<space>leetcode_username<space>no_of_soln_wants_in_no\n\n" +
+            "6. -> Leetcode Topic Wise Problem Solved By User\n\nCommand:- \n;skillstat<space>leetcode_username\n\n" +
+            "7. -> Leetcode Contest Static of user\n\nCommand:- \n;conteststat<space>leetcode_username<space>no_of_contest_data_want\n\n"
+
+        message.reply({
+            content: responseString
+        })
+    }
+
+
     if (message.content === 'Hi' || message.content === 'Hello' || message.content === 'hi' || message.content === 'hello') {
         message.reply({
             content: "Rom Rom Bhaiyo........",
@@ -161,13 +297,13 @@ client.on("messageCreate", async (message) => {
                     'Content-Type': 'multipart/form-data'
                 }
             })
-             console.log(result.data);
+            // console.log(result.data);
             message.reply({
                 content: "Handle Name - " + `${strArray[1]}` + '\n' +
                     "Total Contest -" + `${result.data.contestAttend}` + '\n' +
                     "Contest Rating - " + `${result.data.contestRating}` + '\n' +
-                    "Contest Top Percenteage - " + `${result.data.contestTopPercentage}%`+
-                    `${result.data.contestBadges ? ("\nBadge - "+result.data.contestBadges.name):""}`,
+                    "Contest Top Percenteage - " + `${result.data.contestTopPercentage}%` +
+                    `${result.data.contestBadges ? ("\nBadge - " + result.data.contestBadges.name) : ""}`,
             })
 
 
@@ -227,9 +363,9 @@ client.on("messageCreate", async (message) => {
         });
     }
 
-    if(strArray[0] === ';lcupcome'){
+    if (strArray[0] === ';lcupcome') {
 
-         try {
+        try {
             let result = await axios.get(`https://leetcodecustomapi.onrender.com/api/omrajhalwa/leetcode/upcomingContest`, {
                 withCredentials: true,
                 headers: {
@@ -238,17 +374,17 @@ client.on("messageCreate", async (message) => {
             })
 
             message.reply({
-                content:`${result.data.data[0].title} - ( ${result.data.data[0].date} ) \n  ${result.data.data[1].title} -  ( ${result.data.data[1].date})`
+                content: `${result.data.data[0].title} - ( ${result.data.data[0].date} ) \n  ${result.data.data[1].title} -  ( ${result.data.data[1].date})`
             })
 
-         } catch (error) {
-             console.log(error);
-             message.reply({
-                content:"Some Error Occur in Leetcode Api"
-             })
-         }
+        } catch (error) {
+            console.log(error);
+            message.reply({
+                content: "Some Error Occur in Leetcode Api"
+            })
+        }
 
-        
+
     }
 
     if (strArray[0] === ';potd') {
@@ -259,27 +395,27 @@ client.on("messageCreate", async (message) => {
                     'Content-Type': 'multipart/form-data'
                 }
             })
-    
+
             console.log(result.data.content.activeDailyCodingChallengeQuestion.date);
             let resData = result.data.content.activeDailyCodingChallengeQuestion;
             message.reply({
-                content:`* Q-Name - ${resData.question.title}\n* Difficulty-level -  ${resData.question.difficulty }\n* Acceptance-Rate -  ${parseInt(resData.question.acRate)} % \n* Problem-Link - https://leetcode.com${resData.link}`
+                content: `* Q-Name - ${resData.question.title}\n* Difficulty-level -  ${resData.question.difficulty}\n* Acceptance-Rate -  ${parseInt(resData.question.acRate)} % \n* Problem-Link - https://leetcode.com${resData.link}`
             })
         } catch (error) {
-            message.reply({content:"Some Issue occurs in Leetcode Api"})
+            message.reply({ content: "Some Issue occurs in Leetcode Api" })
         }
-        
-       
+
+
     }
 
     if (strArray[0] === ';userstat') {
 
-        if(strArray.length!=2){
+        if (strArray.length != 2) {
             message.reply({
-                content:"Invalid Command , Check out ;help"
+                content: "Invalid Command , Check out ;help"
             })
         }
-       
+
         try {
             let result = await axios.get(`https://leetcodecustomapi.onrender.com/api/omrajhalwa/leetcode/username/${strArray[1]}`, {
                 withCredentials: true,
@@ -289,19 +425,19 @@ client.on("messageCreate", async (message) => {
             })
             let resData = result.data.content.matchedUser.submitStats.acSubmissionNum;
 
-            let ans=`User Name -  ${strArray[1]} \n -> Total Problem Solved - ${resData[0].count} \n-> Easy Problem Solved - ${resData[1].count} \n-> Medium Problem Solved - ${resData[2].count} \n-> Hard Problem Solved -  ${resData[3].count}`
-           
-            if(strArray[1] !== undefined){
-            message.reply({
-                content:ans
-            })
+            let ans = `User Name -  ${strArray[1]} \n -> Total Problem Solved - ${resData[0].count} \n-> Easy Problem Solved - ${resData[1].count} \n-> Medium Problem Solved - ${resData[2].count} \n-> Hard Problem Solved -  ${resData[3].count}`
+
+            if (strArray[1] !== undefined) {
+                message.reply({
+                    content: ans
+                })
             }
         } catch (err) {
-           // console.log('rom rom');
-         //  console.log(err);
-           message.reply({
-            content:`Rom Rom Sir \nInvalid UserName Try Out Again`
-           })
+            // console.log('rom rom');
+            //  console.log(err);
+            message.reply({
+                content: `Rom Rom Sir \nInvalid UserName Try Out Again`
+            })
         }
 
     }
@@ -309,20 +445,20 @@ client.on("messageCreate", async (message) => {
 
     if (strArray[0] === ';recaccepted') {
 
-        if(strArray.length<2){
+        if (strArray.length < 2) {
             message.reply({
-                content:'Please Enter Username'
+                content: 'Please Enter Username'
             })
-        }else if(strArray.length<3){
+        } else if (strArray.length < 3) {
             message.reply({
-                content:'Please Enter Total no of recent accepted Solution you want'
+                content: 'Please Enter Total no of recent accepted Solution you want'
             })
-        }else if(strArray.length>3){
+        } else if (strArray.length > 3) {
             message.reply({
-                content:'Invalid command , Wants Help Please Type ;help to check valid commands'
+                content: 'Invalid command , Wants Help Please Type ;help to check valid commands'
             })
         }
-  
+
         try {
             let result = await axios.get(`https://leetcodecustomapi.onrender.com/api/omrajhalwa/leetcode/recentac/${strArray[1]}/${strArray[2]}`, {
                 withCredentials: true,
@@ -339,15 +475,15 @@ client.on("messageCreate", async (message) => {
                 advancedString += `-> ${cnt}. ${element.title}\nProblem_Link - https://leetcode.com/problems/${element.titleSlug}/description/\n \n`;
                 cnt++;
             });
-            if(strArray[1] !== undefined){
-            message.reply({
-                content:advancedString
-            })
+            if (strArray[1] !== undefined && strArray.length === 3) {
+                message.reply({
+                    content: advancedString
+                })
             }
         } catch (error) {
-        
+
             message.reply({
-                content:"Invalid User, Try it again!"
+                content: "Invalid User, Try it again!"
             })
         }
 
@@ -356,9 +492,9 @@ client.on("messageCreate", async (message) => {
 
     if (strArray[0] === ';conteststat') {
 
-        if(strArray.length!=3){
+        if (strArray.length != 3) {
             message.reply({
-                content:"Invalid Command , Check out ;help"
+                content: "Invalid Command , Check out ;help"
             })
         }
 
@@ -366,17 +502,17 @@ client.on("messageCreate", async (message) => {
         const input2 = strArray[2];
 
 
-        if(strArray.length<2){
+        if (strArray.length < 2) {
             message.reply({
-                content:'Please Enter Username'
+                content: 'Please Enter Username'
             })
-        }else if(strArray.length<3){
+        } else if (strArray.length < 3) {
             message.reply({
-                content:'Please Enter Total no of recent contest you want'
+                content: 'Please Enter Total no of recent contest you want'
             })
-        }else if(strArray.length>3){
+        } else if (strArray.length > 3) {
             message.reply({
-                content:'Invalid command , Wants Help Please Type ;help to check valid commands'
+                content: 'Invalid command , Wants Help Please Type ;help to check valid commands'
             })
         }
 
@@ -392,13 +528,13 @@ client.on("messageCreate", async (message) => {
             let resData = result.data.content;
             let userRanking = resData.userContestRanking;
             let userRecentContest = resData.userContestRankingHistory;
-             //console.log(userRecentContest);
+            //console.log(userRecentContest);
             let val = input2;
             let rankingListLength = userRecentContest.length;
             //    console.log(rankingListLength);
             let ansString = `Recent Contest of ${input1}\n`;
             let cnt = 1;
-            for (let i = rankingListLength - 1; i >= 0 && val>0; i--) {
+            for (let i = rankingListLength - 1; i >= 0 && val > 0; i--) {
                 if (userRecentContest[i].attended) {
                     val--;
                     const totalSeconds = userRecentContest[i].finishTimeInSeconds;
@@ -416,17 +552,18 @@ client.on("messageCreate", async (message) => {
                 }
 
             }
-            if(input !== undefined){
-            message.reply({
-                content:ansString
-            })
+            if (input1 !== undefined && strArray.length === 3) {
+                message.reply({
+                    content: ansString
+                })
             }
 
         } catch (error) {
+            console.log(error);
             message.reply({
-                content:"Invalid User, Try it again!"
+                content: "Invalid User, Try it again!"
             })
-            
+
         }
 
     }
@@ -434,9 +571,9 @@ client.on("messageCreate", async (message) => {
 
     if (strArray[0] === ';skillstat') {
 
-        if(strArray.length!=2){
+        if (strArray.length != 2) {
             message.reply({
-                content:"Invalid Command , Check out ;help"
+                content: "Invalid Command , Check out ;help"
             })
         }
         const input = strArray[1];
@@ -472,13 +609,14 @@ client.on("messageCreate", async (message) => {
                 fundamentalString += `${element.tagName} - ${element.problemsSolved}\n`;
                 // console.log(element.tagName);
             });
-           if(input !== undefined){
-            message.reply(
-                {content:`Username - ${input} \n--Topic wise problem solved---\n * 1. Advanced Topics -> \n${advancedString} \n * 2. Intermediate Topics -> \n${intermediateString} \n * 3. Fundamental Topics -> \n${fundamentalString}`
-            })
+            if (input !== undefined) {
+                message.reply(
+                    {
+                        content: `Username - ${input} \n--Topic wise problem solved---\n * 1. Advanced Topics -> \n${advancedString} \n * 2. Intermediate Topics -> \n${intermediateString} \n * 3. Fundamental Topics -> \n${fundamentalString}`
+                    })
             }
         } catch (error) {
-            message.reply({content:"Invalid User, Try it again!"});
+            message.reply({ content: "Invalid User, Try it again!" });
         }
     }
 
@@ -605,6 +743,7 @@ client.on("interactionCreate", async interaction => {
 
 
             let resData = result.data.content.recentAcSubmissionList;
+            console.log(result.data.content.recentAcSubmissionList[0].timestamp);
             let advancedString = `* Recent Solved Problems by ${input1}\n \n`;
             let cnt = 1;
             resData.forEach(element => {
