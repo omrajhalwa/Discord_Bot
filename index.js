@@ -197,12 +197,14 @@ client.on('ready', async () => {
             dataArr = [];
             await findTotalSubmissionToday('omrajhalwa');
 
-            dataArr.push({ easy, medium, hard, name: ' Om     ' })
+            dataArr.push({ username:"om72470",easy, medium, hard, name: ' Om         ' })
             console.log(dataArr);
             await findTotalSubmissionToday('akp02');
-            dataArr.push({ easy, medium, hard, name: 'Ashish' })
+            dataArr.push({ username:"akp02",easy, medium, hard, name: 'Ashish    ' })
             await findTotalSubmissionToday('Mohit6261');
-            dataArr.push({ easy, medium, hard, name: 'Mohit ' })
+            dataArr.push({ username:"google0418",easy, medium, hard, name: 'Mohit      ' })
+            await findTotalSubmissionToday('ashu132024');
+            dataArr.push({ username:"ashutosh0481",easy, medium, hard, name: 'Ashutosh' });
             console.log(dataArr);
 
             let n=dataArr.length;
@@ -234,10 +236,12 @@ client.on('ready', async () => {
                 if(total===0){
                     channel.send(`@everyone \n\n @${dataArr[i].name} you have not done any problem today`);
                 }
-                string += `  ${dataArr[i].name}         ${dataArr[i].easy}                  ${dataArr[i].medium}                       ${dataArr[i].hard}\n`;
+                string += `  ${dataArr[i].name}       ${dataArr[i].easy}                  ${dataArr[i].medium}                      ${dataArr[i].hard}\n`;
             }
             
-            channel.send(`@everyone Rom Rom Nallo..\n\n -> Total Problem Solved By You Losers in 24 Hours :-\n\n  Name        Easy         Medium          Hard\n${string}`);
+            channel.send(`@everyone Rom Rom Nallo..\n\n -> Total Problem Solved By You Losers in 24 Hours :-\n\nLeaderBoard-:\n\n  Name        Easy         Medium          Hard\n${string}`);
+            channel.send(`\n\n-> Today LeaderBoard Rank 1 ${dataArr[0].name} Great Sir\n\n`);
+            channel.send(`@${dataArr[dataArr.length-1].username} sharam krle nalle try to push your limits from tommorow onwards`);
         }
 
 
@@ -317,7 +321,7 @@ client.on("messageCreate", async (message) => {
 
     if (strArray.length > 1 && strArray[0] == ';setreminder') {
         let time = strArray[1];
-        let replyAns = `Reminder\n`;
+        let replyAns = `@Reminder\n`;
         for (let i = 2; i < strArray.length; i++) {
             replyAns += strArray[i] + ' ';
         }
