@@ -239,7 +239,7 @@ client.on('ready', async () => {
                 string += `  ${dataArr[i].name}       ${dataArr[i].easy}                  ${dataArr[i].medium}                      ${dataArr[i].hard}\n`;
             }
             
-            channel.send(`@everyone Rom Rom Nallo..\n\n -> Total Problem Solved By You Losers in 24 Hours :-\n\nLeaderBoard-:\n\n  Name        Easy         Medium          Hard\n${string}\n\n-> Today LeaderBoard Rank 1 ${dataArr[0].name} Great Sir\n\n${dataArr[dataArr.length-1].name} sharam krle nalle try to push your limits from tommorow onwards`);
+            channel.send(`@everyone Rom Rom Nallo..\n\n -> Total Problem Solved By You Losers in 24 Hours :-\n\nLeaderBoard-:\n\n  Name        Easy         Medium          Hard\n${string}\n\n-> Today LeaderBoard Rank 1 ${dataArr[0].name} Great Sir\n\n${dataArr[dataArr.length-1].name}sharam krle nalle try to push your limits from tommorow onwards`);
         }
 
 
