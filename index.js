@@ -113,14 +113,14 @@ client.on('ready', async () => {
         if (remDate.getUTCHours() === hours - 2 && remDate.getUTCMinutes() === minutes + 15 && remDate.getUTCDate() === datte && remDate.getUTCMonth() + 1 === month && remDate.getUTCFullYear() === year) {
             let channel = client.channels.cache.get(process.env.CHANNEL_ID);
             if (channel) {
-                channel.send(`@everyone  \n \n # ${title}\n -> Time - At ${hours + 5 + ((minutes + 30) % 60 == 0)}:${(minutes + 30) % 60}0 ${hours <= 12 ? 'AM' : 'PM'} \n -> Date - ${datte}/${month}/${year}`);
+                channel.send(`@everyone  \n \n# ${title}\n -> Time - At ${hours + 5 + ((minutes + 30) % 60 == 0)}:${(minutes + 30) % 60}0 ${hours <= 12 ? 'AM' : 'PM'} \n -> Date - ${datte}/${month}/${year}`);
             }
         }
 
 
 
 
-        if (remDate.getUTCHours() === 23 && remDate.getUTCMinutes() === 55) {
+        if (remDate.getUTCHours() === 23 && remDate.getUTCMinutes() === 58) {
             let easy = 0;
             let medium = 0;
             let hard = 0;
@@ -130,7 +130,7 @@ client.on('ready', async () => {
                 hard = 0;
 
                 try {
-                    let result = await axios.get(`https://leetcodecustomapi.onrender.com/api/omrajhalwa/leetcode/recentac/${username}/${20}`, {
+                    let result = await axios.get(`https://leetcodecustomapi.onrender.com/api/omrajhalwa/leetcode/recentac/${username}/${60}`, {
                         withCredentials: true,
                         headers: {
                             'Content-Type': 'multipart/form-data'
@@ -197,31 +197,31 @@ client.on('ready', async () => {
             dataArr = [];
             await findTotalSubmissionToday('omrajhalwa');
 
-            dataArr.push({ username:"om72470",easy, medium, hard, name: ' Om         ' })
+            dataArr.push({ username: "om72470", easy, medium, hard, name: '  Om    ' })
             console.log(dataArr);
             await findTotalSubmissionToday('akp02');
-            dataArr.push({ username:"akp02",easy, medium, hard, name: 'Ashish    ' })
+            dataArr.push({ username: "akp02", easy, medium, hard, name: ' Ashish ' })
             await findTotalSubmissionToday('Mohit6261');
-            dataArr.push({ username:"google0418",easy, medium, hard, name: 'Mohit      ' })
+            dataArr.push({ username: "google0418", easy, medium, hard, name: ' Mohit  ' })
             await findTotalSubmissionToday('ashu132024');
-            dataArr.push({ username:"ashutosh0481",easy, medium, hard, name: 'Ashutosh' });
-            console.log(dataArr);
+            dataArr.push({ username: "ashutosh0481", easy, medium, hard, name: 'Ashutosh' });
 
-            let n=dataArr.length;
-            for(let i=0;i<n-1;i++){
-                 
-                 for(let j=0;j<n-1-i;j++){
-                    if(((dataArr[j].easy*2)+(dataArr[j].medium*5)+(dataArr[j].hard*7))<((dataArr[j+1].easy*2)+(dataArr[j+1].medium*5)+(dataArr[j+1].hard*7))){
-                     //   swap(dataArr[j]>dataArr[j+1]);
-                        let temp=dataArr[j];
-                        dataArr[j]=dataArr[j+1];
-                        dataArr[j+1]=temp;
-                       
+
+            let n = dataArr.length;
+            for (let i = 0; i < n - 1; i++) {
+
+                for (let j = 0; j < n - 1 - i; j++) {
+                    if (((dataArr[j].easy * 2) + (dataArr[j].medium * 5) + (dataArr[j].hard * 7)) < ((dataArr[j + 1].easy * 2) + (dataArr[j + 1].medium * 5) + (dataArr[j + 1].hard * 7))) {
+                        //   swap(dataArr[j]>dataArr[j+1]);
+                        let temp = dataArr[j];
+                        dataArr[j] = dataArr[j + 1];
+                        dataArr[j + 1] = temp;
+
                     }
-                 }
+                }
             }
 
-           
+
 
 
         }
@@ -232,14 +232,11 @@ client.on('ready', async () => {
             let channel = client.channels.cache.get(process.env.CHANNEL_ID);
             let string = '';
             for (let i = 0; i < dataArr.length; i++) {
-                let total=dataArr[i].easy+dataArr[i].medium+dataArr[i].hard;
-                if(total===0){
-                    channel.send(`@everyone \n\n @${dataArr[i].name} you have not done any problem today`);
-                }
-                string += `  ${dataArr[i].name}       ${dataArr[i].easy}                  ${dataArr[i].medium}                      ${dataArr[i].hard}\n`;
+                let total = dataArr[i].easy + dataArr[i].medium + dataArr[i].hard;
+                string += `${i + 1}.${dataArr[i].name}  ${dataArr[i].easy}      ${dataArr[i].medium}       ${dataArr[i].hard}\n`;
             }
-            
-            channel.send(`@everyone Rom Rom Nallo..\n\n -> Total Problem Solved By You Losers in 24 Hours :-\n\nLeaderBoard-:\n\n  Name        Easy         Medium          Hard\n${string}\n\n-> Today LeaderBoard Rank 1 ${dataArr[0].name} Great Sir\n\n${dataArr[dataArr.length-1].name}sharam krle nalle try to push your limits from tommorow onwards`);
+
+            channel.send(`@everyone \n\`\`\`Rom Rom Nallo..\n\nLeaderBoard-:\n\n   Name   Easy   Medium   Hard\n${string}\`\`\``);
         }
 
 
@@ -287,6 +284,131 @@ client.on("messageCreate", async (message) => {
             content: "Rom Rom Bhaiyo........",
         })
     }
+
+
+    if (message.content === ';leaderboard') {
+        let dataArr = [];
+        let easy = 0;
+        let medium = 0;
+        let hard = 0;
+        let findTotalSubmissionToday = async (username) => {
+            easy = 0;
+            medium = 0;
+            hard = 0;
+
+            try {
+                let result = await axios.get(`https://leetcodecustomapi.onrender.com/api/omrajhalwa/leetcode/recentac/${username}/${60}`, {
+                    withCredentials: true,
+                    headers: {
+                        'Content-Type': 'multipart/form-data'
+                    }
+                })
+                function submittedTime(givenTimestamp) {
+
+
+                    const currentTimestamp = Math.floor(Date.now() / 1000);
+
+
+                    const differenceInSeconds = currentTimestamp - givenTimestamp;
+
+
+                    const days = Math.floor(differenceInSeconds / (24 * 60 * 60));
+                    const hours = Math.floor((differenceInSeconds % (24 * 60 * 60)) / (60 * 60));
+                    const minutes = Math.floor((differenceInSeconds % (60 * 60)) / 60);
+                    const seconds = differenceInSeconds % 60;
+                    return { days, hours, minutes, seconds };
+                }
+
+                let resDataArr = result.data.content.recentAcSubmissionList;
+                // console.log(result.data.content.recentAcSubmissionList[0].timestamp);
+
+
+
+                for (const element of resDataArr) {
+                    // console.log(element.titleSlug);
+                    let obj = submittedTime(element.timestamp);
+                    //    console.log(element.timestamp);
+                    let days = obj.days;
+                    let hours = obj.hours;
+                    let minutes = obj.minutes;
+                    let seconds = obj.seconds;
+                    if (days === 0 && hours < 24) {
+                        try {
+                            let result = await axios.get(`https://leetcodecustomapi.onrender.com/api/omrajhalwa/leetcode/question/${element.titleSlug}`, {
+                                withCredentials: true,
+                                headers: {
+                                    'Content-Type': 'multipart/form-data'
+                                }
+                            })
+
+                            // console.log(result.data.content.question.difficulty);
+                            let diff = result.data.content.question.difficulty;
+                            if (diff === 'Easy') easy++;
+                            if (diff === 'Medium') medium++;
+                            if (diff === 'Hard') hard++;
+
+                        } catch (error) {
+
+                        }
+                    }
+                }
+
+
+
+            } catch (error) {
+                console.log(error);
+            }
+
+
+        }
+        dataArr = [];
+        await findTotalSubmissionToday('omrajhalwa');
+
+        dataArr.push({ username: "om72470", easy, medium, hard, name: '  Om    ' })
+        // console.log(dataArr);
+        await findTotalSubmissionToday('akp02');
+        dataArr.push({ username: "akp02", easy, medium, hard, name: ' Ashish ' })
+        await findTotalSubmissionToday('Mohit6261');
+        dataArr.push({ username: "google0418", easy, medium, hard, name: ' Mohit  ' })
+        await findTotalSubmissionToday('ashu132024').then(() => {
+
+            dataArr.push({ username: "ashutosh0481", easy, medium, hard, name: 'Ashutosh' });
+            let n = dataArr.length;
+            for (let i = 0; i < n - 1; i++) {
+
+                for (let j = 0; j < n - 1 - i; j++) {
+                    if (((dataArr[j].easy * 2) + (dataArr[j].medium * 5) + (dataArr[j].hard * 7)) < ((dataArr[j + 1].easy * 2) + (dataArr[j + 1].medium * 5) + (dataArr[j + 1].hard * 7))) {
+                        //   swap(dataArr[j]>dataArr[j+1]);
+                        let temp = dataArr[j];
+                        dataArr[j] = dataArr[j + 1];
+                        dataArr[j + 1] = temp;
+
+                    }
+                }
+            }
+
+
+            // let channel = client.channels.cache.get(process.env.CHANNEL_ID);
+            let string = '';
+            for (let i = 0; i < dataArr.length; i++) {
+                let total = dataArr[i].easy + dataArr[i].medium + dataArr[i].hard;
+                string += `${i + 1}.${dataArr[i].name}  ${dataArr[i].easy}      ${dataArr[i].medium}       ${dataArr[i].hard}\n`;
+            }
+
+
+            message.reply({
+                content: `\n\`\`\`LeaderBoard-:\n\n   Name   Easy   Medium   Hard\n${string}\`\`\``,
+            })
+
+
+        });
+
+
+
+
+    }
+
+
     let str = message.content;
     let strArray = str.split(" ");
     // console.log(strArray[0]);
@@ -301,11 +423,7 @@ client.on("messageCreate", async (message) => {
             })
             // console.log(result.data);
             message.reply({
-                content: "Handle Name - " + `${strArray[1]}` + '\n' +
-                    "Total Contest -" + `${result.data.contestAttend}` + '\n' +
-                    "Contest Rating - " + `${result.data.contestRating}` + '\n' +
-                    "Contest Top Percenteage - " + `${result.data.contestTopPercentage}%` +
-                    `${result.data.contestBadges ? ("\nBadge - " + result.data.contestBadges.name) : ""}`,
+                content: `\`\`\`Handle Name -  ${strArray[1]}\nTotal Contest -  ${result.data.contestAttend}\nContest Rating -   ${parseInt(result.data.contestRating)}\nContest Top Percenteage - ${result.data.contestTopPercentage}% ${result.data.contestBadges ? ("\nBadge - " + result.data.contestBadges.name) : ""}\`\`\``,
             })
 
 
@@ -376,7 +494,7 @@ client.on("messageCreate", async (message) => {
             })
 
             message.reply({
-                content: `${result.data.data[0].title} - ( ${result.data.data[0].date} ) \n  ${result.data.data[1].title} -  ( ${result.data.data[1].date})`
+                content: `\`\`\`\n# Upcoming LC Contest.....\n\n${result.data.data[0].title}-(${result.data.data[0].date}) \n\n${result.data.data[1].title}-(${result.data.data[1].date})\`\`\``
             })
 
         } catch (error) {
@@ -427,7 +545,7 @@ client.on("messageCreate", async (message) => {
             })
             let resData = result.data.content.matchedUser.submitStats.acSubmissionNum;
 
-            let ans = `User Name -  ${strArray[1]} \n -> Total Problem Solved - ${resData[0].count} \n-> Easy Problem Solved - ${resData[1].count} \n-> Medium Problem Solved - ${resData[2].count} \n-> Hard Problem Solved -  ${resData[3].count}`
+            let ans = `\`\`\`User Name -  ${strArray[1]} \n-> Total Problem Solved - ${resData[0].count} \n-> Easy Problem Solved - ${resData[1].count} \n-> Medium Problem Solved - ${resData[2].count} \n-> Hard Problem Solved -  ${resData[3].count}\`\`\``
 
             if (strArray[1] !== undefined) {
                 message.reply({
@@ -549,7 +667,7 @@ client.on("messageCreate", async (message) => {
 
                     // Calculate remaining seconds
                     const seconds = totalSeconds % 60;
-                    ansString += `${cnt}. ${userRecentContest[i].contest.title}\n-> Rating - ${userRecentContest[i].rating}\n-> Ranking - ${userRecentContest[i].ranking}\n-> Problem_Solved - ${userRecentContest[i].problemsSolved}/${userRecentContest[i].totalProblems}\n-> Rating_Trend - ${userRecentContest[i].trendDirection}\n-> Finish_Time - ${hours} hours, ${minutes} minutes, and ${seconds} seconds\n \n`;
+                    ansString += `\`\`\`${cnt}. ${userRecentContest[i].contest.title}\n-> Rating - ${userRecentContest[i].rating}\n-> Ranking - ${parseInt(userRecentContest[i].ranking)}\n-> Problem_Solved - ${userRecentContest[i].problemsSolved}/${userRecentContest[i].totalProblems}\n-> Rating_Trend - ${userRecentContest[i].trendDirection}\n-> Finish_Time - ${hours} hrs, ${minutes} min and ${seconds} sec\n \n\`\`\``;
                     cnt++;
                 }
 
@@ -597,24 +715,24 @@ client.on("messageCreate", async (message) => {
             // let myReply=null;
             let advancedString = '';
             advanced.forEach(element => {
-                advancedString += `${element.tagName} - ${element.problemsSolved}\n`;
+                advancedString += `\`\`\`${element.tagName} - ${element.problemsSolved}\n\`\`\``;
                 // console.log(element.tagName);
             });
             let intermediateString = '';
             intermediate.forEach(element => {
-                intermediateString += `${element.tagName} - ${element.problemsSolved}\n`;
+                intermediateString += `\`\`\`${element.tagName} - ${element.problemsSolved}\n\`\`\``;
                 // console.log(element.tagName);
             });
 
             let fundamentalString = '';
             fundamental.forEach(element => {
-                fundamentalString += `${element.tagName} - ${element.problemsSolved}\n`;
+                fundamentalString += `\`\`\`${element.tagName} - ${element.problemsSolved}\n\`\`\``;
                 // console.log(element.tagName);
             });
             if (input !== undefined) {
                 message.reply(
                     {
-                        content: `Username - ${input} \n--Topic wise problem solved---\n * 1. Advanced Topics -> \n${advancedString} \n * 2. Intermediate Topics -> \n${intermediateString} \n * 3. Fundamental Topics -> \n${fundamentalString}`
+                        content: `Username - ${input} \n--Topic wise problem solved---\n \`\`\` 1. Advanced Topics -> \`\`\`\n${advancedString} \n \`\`\` 2. Intermediate Topics -> \`\`\`\n${intermediateString} \n \`\`\`3. Fundamental Topics ->\`\`\` \n${fundamentalString}`
                     })
             }
         } catch (error) {
