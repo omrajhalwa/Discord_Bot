@@ -195,15 +195,15 @@ client.on('ready', async () => {
 
             }
             dataArr = [];
-            await findTotalSubmissionToday('omrajhalwa');
+            await findTotalSubmissionToday(process.env.OM);
 
             dataArr.push({ username: "om72470", easy, medium, hard, name: '  Om    ' })
             console.log(dataArr);
-            await findTotalSubmissionToday('akp02');
+            await findTotalSubmissionToday(process.env.ASHISH);
             dataArr.push({ username: "akp02", easy, medium, hard, name: ' Ashish ' })
-            await findTotalSubmissionToday('Mohit6261');
+            await findTotalSubmissionToday(process.env.MOHIT);
             dataArr.push({ username: "google0418", easy, medium, hard, name: ' Mohit  ' })
-            await findTotalSubmissionToday('ashu132024');
+            await findTotalSubmissionToday(process.env.ASHUTOSH);
             dataArr.push({ username: "ashutosh0481", easy, medium, hard, name: 'Ashutosh' });
 
 
@@ -362,15 +362,15 @@ client.on("messageCreate", async (message) => {
 
         }
         dataArr = [];
-        await findTotalSubmissionToday('omrajhalwa');
+        await findTotalSubmissionToday(process.env.OM);
 
         dataArr.push({ username: "om72470", easy, medium, hard, name: '  Om    ' })
         // console.log(dataArr);
-        await findTotalSubmissionToday('akp02');
+        await findTotalSubmissionToday(process.env.ASHISH);
         dataArr.push({ username: "akp02", easy, medium, hard, name: ' Ashish ' })
-        await findTotalSubmissionToday('Mohit6261');
+        await findTotalSubmissionToday(process.env.MOHIT);
         dataArr.push({ username: "google0418", easy, medium, hard, name: ' Mohit  ' })
-        await findTotalSubmissionToday('ashu132024').then(() => {
+        await findTotalSubmissionToday(process.env.ASHUTOSH).then(() => {
 
             dataArr.push({ username: "ashutosh0481", easy, medium, hard, name: 'Ashutosh' });
             let n = dataArr.length;
